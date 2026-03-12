@@ -2,10 +2,10 @@ import { parseArgs } from "node:util";
 import type { McpGraphqlConfig } from "./types.js";
 
 const HELP_TEXT = `
-mcp-graphql — Turn any GraphQL API into MCP tools
+graphql-to-mcp — Turn any GraphQL API into MCP tools
 
 USAGE
-  npx mcp-graphql <endpoint> [options]
+  npx graphql-to-mcp <endpoint> [options]
 
 ENDPOINT
   URL of a GraphQL API (must support introspection)
@@ -28,9 +28,9 @@ PRO OPTIONS
   --license-key <key>          Pro license key (or MCP_GRAPHQL_LICENSE_KEY env var)
 
 EXAMPLES
-  npx mcp-graphql https://api.spacex.land/graphql
-  npx mcp-graphql https://api.github.com/graphql --bearer ghp_xxx
-  npx mcp-graphql https://countries.trevorblades.com --include "country*"
+  npx graphql-to-mcp https://api.spacex.land/graphql
+  npx graphql-to-mcp https://api.github.com/graphql --bearer ghp_xxx
+  npx graphql-to-mcp https://countries.trevorblades.com --include "country*"
 `.trim();
 
 export function parseCliArgs(argv: string[]): McpGraphqlConfig | null {
@@ -55,7 +55,7 @@ export function parseCliArgs(argv: string[]): McpGraphqlConfig | null {
 	});
 
 	if (values.version) {
-		console.log("mcp-graphql v0.1.0");
+		console.log("graphql-to-mcp v0.1.1");
 		return null;
 	}
 

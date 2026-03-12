@@ -1,8 +1,11 @@
-# mcp-graphql
+# graphql-to-mcp
+
+[![npm version](https://img.shields.io/npm/v/graphql-to-mcp)](https://www.npmjs.com/package/graphql-to-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Turn any GraphQL API into MCP tools — zero config, zero code.
 
-Point `mcp-graphql` at a GraphQL endpoint and it auto-generates one MCP tool per query/mutation via introspection. Works with Claude Desktop, Cursor, Windsurf, and any MCP client.
+Point `graphql-to-mcp` at a GraphQL endpoint and it auto-generates one MCP tool per query/mutation via introspection. Works with Claude Desktop, Cursor, Windsurf, and any MCP client.
 
 ## Quick Start
 
@@ -11,7 +14,7 @@ Point `mcp-graphql` at a GraphQL endpoint and it auto-generates one MCP tool per
   "mcpServers": {
     "my-api": {
       "command": "npx",
-      "args": ["-y", "mcp-graphql", "https://countries.trevorblades.com/graphql"]
+      "args": ["-y", "graphql-to-mcp", "https://countries.trevorblades.com/graphql"]
     }
   }
 }
@@ -35,19 +38,19 @@ That's it. Claude can now query countries, continents, and languages.
 
 ```bash
 # Public API (no auth)
-npx mcp-graphql https://countries.trevorblades.com/graphql
+npx graphql-to-mcp https://countries.trevorblades.com/graphql
 
 # With bearer token
-npx mcp-graphql https://api.github.com/graphql --bearer ghp_xxxxx
+npx graphql-to-mcp https://api.github.com/graphql --bearer ghp_xxxxx
 
 # With API key
-npx mcp-graphql https://api.example.com/graphql --api-key "X-API-Key:your-key:header"
+npx graphql-to-mcp https://api.example.com/graphql --api-key "X-API-Key:your-key:header"
 
 # Filter operations
-npx mcp-graphql https://api.example.com/graphql --include "get*" --exclude "internal*"
+npx graphql-to-mcp https://api.example.com/graphql --include "get*" --exclude "internal*"
 
 # With prefix (avoid name collisions when using multiple APIs)
-npx mcp-graphql https://api.example.com/graphql --prefix myapi
+npx graphql-to-mcp https://api.example.com/graphql --prefix myapi
 ```
 
 ### Claude Desktop / Cursor Config
@@ -58,7 +61,7 @@ npx mcp-graphql https://api.example.com/graphql --prefix myapi
     "github": {
       "command": "npx",
       "args": [
-        "-y", "mcp-graphql",
+        "-y", "graphql-to-mcp",
         "https://api.github.com/graphql",
         "--bearer", "ghp_xxxxx",
         "--prefix", "github"
@@ -71,7 +74,7 @@ npx mcp-graphql https://api.example.com/graphql --prefix myapi
 ### Programmatic
 
 ```typescript
-import { createServer } from "mcp-graphql";
+import { createServer } from "graphql-to-mcp";
 
 const server = await createServer({
   endpoint: "https://api.example.com/graphql",
@@ -111,7 +114,7 @@ LLMs are significantly better at filling flat key-value parameters than deeply n
 
 ## Smart Truncation
 
-GraphQL APIs can return large payloads that overwhelm LLM context windows. `mcp-graphql` automatically:
+GraphQL APIs can return large payloads that overwhelm LLM context windows. `graphql-to-mcp` automatically:
 
 - **Slices arrays** to 20 items (with metadata showing total count)
 - **Prunes depth** beyond 5 levels (with object/array summaries)

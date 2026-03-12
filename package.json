@@ -1,10 +1,10 @@
 {
-  "name": "mcp-graphql",
-  "version": "0.1.0",
+  "name": "graphql-to-mcp",
+  "version": "0.1.2",
   "description": "Turn any GraphQL API into MCP tools. Zero config, zero code — just point at an endpoint.",
   "type": "module",
   "bin": {
-    "mcp-graphql": "./dist/bin/mcp-graphql.js"
+    "graphql-to-mcp": "./dist/bin/graphql-to-mcp.js"
   },
   "exports": {
     ".": "./dist/src/index.js"
