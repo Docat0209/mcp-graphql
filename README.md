@@ -10,10 +10,18 @@ Point `graphql-to-mcp` at a GraphQL endpoint and it auto-generates one MCP tool 
 
 ## Quick Start
 
+**Try it now** — no install needed:
+
+```bash
+npx graphql-to-mcp https://countries.trevorblades.com/graphql
+```
+
+Or add to Claude Desktop / Cursor config:
+
 ```json
 {
   "mcpServers": {
-    "my-api": {
+    "countries": {
       "command": "npx",
       "args": ["-y", "graphql-to-mcp", "https://countries.trevorblades.com/graphql"]
     }
@@ -121,9 +129,24 @@ GraphQL APIs can return large payloads that overwhelm LLM context windows. `grap
 - **Prunes depth** beyond 5 levels (with object/array summaries)
 - **Hard truncates** at 50K characters as a safety net
 
-## Related
+## Use with REST APIs Too
 
-- [mcp-openapi](https://www.npmjs.com/package/mcp-openapi) — Same zero-config approach for REST/OpenAPI APIs
+Pair with [mcp-openapi](https://www.npmjs.com/package/mcp-openapi) to give Claude access to both REST and GraphQL APIs:
+
+```json
+{
+  "mcpServers": {
+    "github-graphql": {
+      "command": "npx",
+      "args": ["-y", "graphql-to-mcp", "https://api.github.com/graphql", "--bearer", "ghp_xxx", "--prefix", "gh"]
+    },
+    "petstore-rest": {
+      "command": "npx",
+      "args": ["-y", "mcp-openapi", "https://petstore3.swagger.io/api/v3/openapi.json"]
+    }
+  }
+}
+```
 
 ## License
 
