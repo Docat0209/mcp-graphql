@@ -1,6 +1,7 @@
 # graphql-to-mcp
 
 [![npm version](https://img.shields.io/npm/v/graphql-to-mcp)](https://www.npmjs.com/package/graphql-to-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/graphql-to-mcp)](https://www.npmjs.com/package/graphql-to-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Turn any GraphQL API into MCP tools — zero config, zero code.
