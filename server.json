@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.docat0209/graphql",
-  "description": "Turn any GraphQL API into MCP tools — zero config, zero code. Auto-introspection with flat parameter schemas for better LLM accuracy.",
+  "name": "io.github.Docat0209/graphql",
+  "description": "Turn any GraphQL API into MCP tools. Zero config, zero code.",
   "repository": {
     "url": "https://github.com/Docat0209/mcp-graphql",
     "source": "github"
   },
-  "version": "0.1.3",
+  "version": "0.1.4",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "graphql-to-mcp",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "transport": {
         "type": "stdio"
       }

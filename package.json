@@ -1,7 +1,7 @@
 {
   "name": "graphql-to-mcp",
-  "version": "0.1.3",
-  "mcpName": "io.github.docat0209/graphql",
+  "version": "0.1.4",
+  "mcpName": "io.github.Docat0209/graphql",
   "description": "Turn any GraphQL API into MCP tools. Zero config, zero code — just point at an endpoint.",
   "type": "module",
   "bin": {
