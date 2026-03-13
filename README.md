@@ -8,6 +8,10 @@ Turn any GraphQL API into MCP tools — zero config, zero code.
 
 Point `graphql-to-mcp` at a GraphQL endpoint and it auto-generates one MCP tool per query/mutation via introspection. Works with Claude Desktop, Cursor, Windsurf, and any MCP client.
 
+<a href="https://glama.ai/mcp/servers/Docat0209/mcp-graphql">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/Docat0209/mcp-graphql/badge" alt="graphql-to-mcp MCP server" />
+</a>
+
 ## Quick Start
 
 ```json
