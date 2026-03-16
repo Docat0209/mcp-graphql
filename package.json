@@ -51,5 +51,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Docat0209/mcp-graphql"
+  },
+  "bugs": {
+    "url": "https://github.com/Docat0209/mcp-graphql/issues"
   }
 }
