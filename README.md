@@ -40,6 +40,8 @@ That's it. Claude can now query countries, continents, and languages.
 - **Auth support** — Bearer tokens, API keys (header or query)
 - **Retry logic** — automatic retries on 429/5xx with exponential backoff
 - **Include/exclude filters** — expose only the operations you want
+- **Schema caching** — skip re-introspection with `--schema-cache` for faster startup
+- **Mutation safety** — auto-detect destructive mutations (`delete*`, `remove*`, etc.) and warn or block them
 
 ## Usage
 
@@ -60,6 +62,15 @@ npx graphql-to-mcp https://api.example.com/graphql --include "get*" --exclude "i
 
 # With prefix (avoid name collisions when using multiple APIs)
 npx graphql-to-mcp https://api.example.com/graphql --prefix myapi
+
+# Cache schema locally for faster restarts
+npx graphql-to-mcp https://api.example.com/graphql --schema-cache ./schema.json
+
+# Force re-introspection (ignore cache)
+npx graphql-to-mcp https://api.example.com/graphql --schema-cache ./schema.json --force-refresh
+
+# Block destructive mutations (delete*, remove*, etc.)
+npx graphql-to-mcp https://api.example.com/graphql --mutation-safety safe
 ```
 
 ### Claude Desktop / Cursor Config
@@ -120,6 +131,9 @@ LLMs are significantly better at filling flat key-value parameters than deeply n
 | `--timeout <ms>` | Request timeout | 30000 |
 | `--max-retries <n>` | Retry on 429/5xx | 3 |
 | `--transport <stdio\|sse>` | MCP transport | stdio |
+| `--schema-cache <path>` | Save/load introspection cache | — |
+| `--force-refresh` | Ignore cache, re-introspect | false |
+| `--mutation-safety <mode>` | `warn` \| `safe` \| `unrestricted` | warn |
 
 ## Smart Truncation
 
@@ -128,6 +142,43 @@ GraphQL APIs can return large payloads that overwhelm LLM context windows. `grap
 - **Slices arrays** to 20 items (with metadata showing total count)
 - **Prunes depth** beyond 5 levels (with object/array summaries)
 - **Hard truncates** at 50K characters as a safety net
+
+## Schema Caching
+
+Introspection queries can be slow on large schemas. Use `--schema-cache` to save the introspection result locally:
+
+```bash
+# First run: introspects and saves to cache
+npx graphql-to-mcp https://api.example.com/graphql --schema-cache ./schema.json
+
+# Subsequent runs: loads from cache (instant startup)
+npx graphql-to-mcp https://api.example.com/graphql --schema-cache ./schema.json
+
+# Force re-introspection when the API schema changes
+npx graphql-to-mcp https://api.example.com/graphql --schema-cache ./schema.json --force-refresh
+```
+
+The cache file stores the endpoint URL and timestamp. If you point at a different endpoint, it automatically re-introspects.
+
+## Mutation Safety
+
+By default, `graphql-to-mcp` detects destructive mutations and adds warnings to their descriptions. This helps LLMs understand the risk before executing them.
+
+Detected patterns: `delete*`, `remove*`, `drop*`, `clear*`, `truncate*`, `destroy*`, `purge*`, `reset*` (case-insensitive).
+
+| Mode | Behavior |
+|------|----------|
+| `warn` (default) | Adds "DESTRUCTIVE:" prefix to dangerous mutation descriptions |
+| `safe` | Completely excludes dangerous mutations from the tool list |
+| `unrestricted` | No filtering or warnings (previous behavior) |
+
+```bash
+# Safe mode: only expose read queries + non-destructive mutations
+npx graphql-to-mcp https://api.example.com/graphql --mutation-safety safe
+
+# Unrestricted: expose everything (use with caution)
+npx graphql-to-mcp https://api.example.com/graphql --mutation-safety unrestricted
+```
 
 ## Use with REST APIs Too
 
@@ -147,6 +198,23 @@ Pair with [mcp-openapi](https://www.npmjs.com/package/mcp-openapi) to give Claud
   }
 }
 ```
+
+## Pre-built MCP Servers
+
+Don't want to configure APIs yourself? These ready-to-use `.mcpb` plugins connect Claude to popular services in one click:
+
+| Plugin | What it does | Price |
+|--------|-------------|-------|
+| [AI Crypto Tracker](https://docat.gumroad.com/l/kmbib) | Ask Claude about Bitcoin, ETH, 10,000+ coins — prices, trends, market cap | ~~$14~~ $9 |
+| [AI Stripe Dashboard](https://docat.gumroad.com/l/zzycz) | Ask Claude your MRR, subscriptions, invoices — read-only, safe | ~~$24~~ $15 |
+| [AI Weather Assistant](https://docat.gumroad.com/l/mpjia) | Ask Claude about weather forecasts anywhere in the world | Free |
+
+> All plugins use one-click `.mcpb` install for Claude Desktop — no terminal, no config files needed.
+
+## Related
+
+- [mcp-openapi](https://www.npmjs.com/package/mcp-openapi) — Same zero-config approach for REST/OpenAPI APIs
+- [CLAUDE.md Templates](https://docat.gumroad.com/l/claudemd-mega-collection) — 32 production-ready instruction files for Claude Code
 
 ## License
 

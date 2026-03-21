@@ -1,3 +1,5 @@
+export type MutationSafetyMode = "warn" | "safe" | "unrestricted";
+
 export interface McpGraphqlConfig {
 	/** GraphQL endpoint URL */
 	endpoint: string;
@@ -29,6 +31,12 @@ export interface McpGraphqlConfig {
 		arraySliceSize?: number;
 		maxDepth?: number;
 	};
+	/** Path to save/load cached introspection schema */
+	schemaCache?: string;
+	/** Force re-introspection even if cache exists */
+	forceRefresh?: boolean;
+	/** Mutation safety mode: warn (default), safe, or unrestricted */
+	mutationSafety?: MutationSafetyMode;
 }
 
 export type AuthConfig =
@@ -40,4 +48,5 @@ export const DEFAULT_CONFIG = {
 	maxRetries: 3,
 	transport: "stdio" as const,
 	port: 3000,
+	mutationSafety: "warn" as const,
 } satisfies Partial<McpGraphqlConfig>;

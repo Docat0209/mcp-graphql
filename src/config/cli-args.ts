@@ -1,5 +1,5 @@
 import { parseArgs } from "node:util";
-import type { McpGraphqlConfig } from "./types.js";
+import type { McpGraphqlConfig, MutationSafetyMode } from "./types.js";
 
 const HELP_TEXT = `
 graphql-to-mcp — Turn any GraphQL API into MCP tools
@@ -21,6 +21,9 @@ OPTIONS
   --port <number>              SSE port (default: 3000)
   --timeout <ms>               Request timeout (default: 30000)
   --max-retries <number>       Retry count on 429/5xx (default: 3)
+  --schema-cache <path>        Save/load introspection schema cache to file
+  --force-refresh              Ignore schema cache and re-introspect
+  --mutation-safety <mode>     warn|safe|unrestricted (default: warn)
   --help, -h                   Show this help
   --version, -v                Show version
 
@@ -31,7 +34,11 @@ EXAMPLES
   npx graphql-to-mcp https://api.spacex.land/graphql
   npx graphql-to-mcp https://api.github.com/graphql --bearer ghp_xxx
   npx graphql-to-mcp https://countries.trevorblades.com --include "country*"
+  npx graphql-to-mcp https://api.example.com/graphql --schema-cache ./schema.json
+  npx graphql-to-mcp https://api.example.com/graphql --mutation-safety safe
 `.trim();
+
+const VALID_SAFETY_MODES = new Set(["warn", "safe", "unrestricted"]);
 
 export function parseCliArgs(argv: string[]): McpGraphqlConfig | null {
 	const { values, positionals } = parseArgs({
@@ -49,13 +56,16 @@ export function parseCliArgs(argv: string[]): McpGraphqlConfig | null {
 			timeout: { type: "string" },
 			"max-retries": { type: "string" },
 			"license-key": { type: "string" },
+			"schema-cache": { type: "string" },
+			"force-refresh": { type: "boolean" },
+			"mutation-safety": { type: "string" },
 			help: { type: "boolean", short: "h" },
 			version: { type: "boolean", short: "v" },
 		},
 	});
 
 	if (values.version) {
-		console.log("graphql-to-mcp v0.1.1");
+		console.log("graphql-to-mcp v0.2.0");
 		return null;
 	}
 
@@ -96,6 +106,19 @@ export function parseCliArgs(argv: string[]): McpGraphqlConfig | null {
 	const licenseKey =
 		values["license-key"] ?? process.env.MCP_GRAPHQL_LICENSE_KEY;
 
+	// Parse mutation safety mode
+	const rawSafety = values["mutation-safety"];
+	let mutationSafety: MutationSafetyMode | undefined;
+	if (rawSafety) {
+		if (!VALID_SAFETY_MODES.has(rawSafety)) {
+			console.error(
+				`Invalid --mutation-safety value: "${rawSafety}". Must be warn, safe, or unrestricted.`,
+			);
+			process.exit(1);
+		}
+		mutationSafety = rawSafety as MutationSafetyMode;
+	}
+
 	return {
 		endpoint,
 		auth,
@@ -110,5 +133,8 @@ export function parseCliArgs(argv: string[]): McpGraphqlConfig | null {
 			? Number.parseInt(values["max-retries"], 10)
 			: undefined,
 		licenseKey,
+		schemaCache: values["schema-cache"],
+		forceRefresh: values["force-refresh"],
+		mutationSafety,
 	};
 }

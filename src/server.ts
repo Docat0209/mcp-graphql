@@ -7,7 +7,12 @@ import {
 import type { McpGraphqlConfig } from "./config/types.js";
 import { DEFAULT_CONFIG } from "./config/types.js";
 import { introspect, extractFields } from "./parser/introspection.js";
+import {
+	loadSchemaCache,
+	saveSchemaCache,
+} from "./parser/schema-cache.js";
 import { generateTools, type GeneratedTool } from "./generator/tool-generator.js";
+import { applyMutationSafety } from "./generator/mutation-safety.js";
 import { buildQuery } from "./executor/query-builder.js";
 import { executeGraphql } from "./executor/http-client.js";
 import { mapResponse } from "./executor/response-mapper.js";
@@ -33,17 +38,40 @@ export async function createServer(
 		}
 	}
 
-	// Introspect schema
-	logger.info(`Introspecting ${cfg.endpoint}...`);
-	const schema = await introspect(cfg.endpoint, requestHeaders, cfg.timeout);
+	// Introspect schema (with optional caching)
+	let schema;
+	if (cfg.schemaCache && !cfg.forceRefresh) {
+		schema = loadSchemaCache(cfg.schemaCache, cfg.endpoint);
+	}
+	if (!schema) {
+		if (cfg.forceRefresh && cfg.schemaCache) {
+			logger.info(`Force refresh: ignoring cache, re-introspecting ${cfg.endpoint}...`);
+		} else {
+			logger.info(`Introspecting ${cfg.endpoint}...`);
+		}
+		if (cfg.schemaCache) {
+			schema = await saveSchemaCache(
+				cfg.schemaCache,
+				cfg.endpoint,
+				requestHeaders,
+				cfg.timeout,
+			);
+		} else {
+			schema = await introspect(cfg.endpoint, requestHeaders, cfg.timeout);
+		}
+	}
+
 	const parsed = extractFields(schema);
 
 	// Generate tools
-	const tools = generateTools(parsed, {
+	let tools = generateTools(parsed, {
 		prefix: cfg.prefix,
 		include: cfg.include,
 		exclude: cfg.exclude,
 	});
+
+	// Apply mutation safety
+	tools = applyMutationSafety(tools, cfg.mutationSafety);
 
 	// Build tool lookup
 	const toolMap = new Map<string, GeneratedTool>();
@@ -59,7 +87,7 @@ export async function createServer(
 	const server = new Server(
 		{
 			name: cfg.prefix ? `mcp-graphql-${cfg.prefix}` : "mcp-graphql",
-			version: "0.1.0",
+			version: "0.2.0",
 		},
 		{
 			capabilities: { tools: {} },

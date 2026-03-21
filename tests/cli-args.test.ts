@@ -74,4 +74,61 @@ describe("parseCliArgs", () => {
 			in: "header",
 		});
 	});
+
+	it("parses --schema-cache", () => {
+		const config = parseCliArgs([
+			"https://api.example.com/graphql",
+			"--schema-cache",
+			"./schema.json",
+		]);
+		expect(config?.schemaCache).toBe("./schema.json");
+	});
+
+	it("parses --force-refresh", () => {
+		const config = parseCliArgs([
+			"https://api.example.com/graphql",
+			"--schema-cache",
+			"./schema.json",
+			"--force-refresh",
+		]);
+		expect(config?.forceRefresh).toBe(true);
+		expect(config?.schemaCache).toBe("./schema.json");
+	});
+
+	it("defaults forceRefresh to undefined", () => {
+		const config = parseCliArgs(["https://api.example.com/graphql"]);
+		expect(config?.forceRefresh).toBeUndefined();
+	});
+
+	it("parses --mutation-safety warn", () => {
+		const config = parseCliArgs([
+			"https://api.example.com/graphql",
+			"--mutation-safety",
+			"warn",
+		]);
+		expect(config?.mutationSafety).toBe("warn");
+	});
+
+	it("parses --mutation-safety safe", () => {
+		const config = parseCliArgs([
+			"https://api.example.com/graphql",
+			"--mutation-safety",
+			"safe",
+		]);
+		expect(config?.mutationSafety).toBe("safe");
+	});
+
+	it("parses --mutation-safety unrestricted", () => {
+		const config = parseCliArgs([
+			"https://api.example.com/graphql",
+			"--mutation-safety",
+			"unrestricted",
+		]);
+		expect(config?.mutationSafety).toBe("unrestricted");
+	});
+
+	it("defaults mutationSafety to undefined (uses DEFAULT_CONFIG)", () => {
+		const config = parseCliArgs(["https://api.example.com/graphql"]);
+		expect(config?.mutationSafety).toBeUndefined();
+	});
 });
