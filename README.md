@@ -199,22 +199,9 @@ Pair with [mcp-openapi](https://www.npmjs.com/package/mcp-openapi) to give Claud
 }
 ```
 
-## Pre-built MCP Servers
-
-Don't want to configure APIs yourself? These ready-to-use `.mcpb` plugins connect Claude to popular services in one click:
-
-| Plugin | What it does | Price |
-|--------|-------------|-------|
-| [AI Crypto Tracker](https://docat.gumroad.com/l/kmbib) | Ask Claude about Bitcoin, ETH, 10,000+ coins — prices, trends, market cap | ~~$14~~ $9 |
-| [AI Stripe Dashboard](https://docat.gumroad.com/l/zzycz) | Ask Claude your MRR, subscriptions, invoices — read-only, safe | ~~$24~~ $15 |
-| [AI Weather Assistant](https://docat.gumroad.com/l/mpjia) | Ask Claude about weather forecasts anywhere in the world | Free |
-
-> All plugins use one-click `.mcpb` install for Claude Desktop — no terminal, no config files needed.
-
 ## Related
 
 - [mcp-openapi](https://www.npmjs.com/package/mcp-openapi) — Same zero-config approach for REST/OpenAPI APIs
-- [CLAUDE.md Templates](https://docat.gumroad.com/l/claudemd-mega-collection) — 32 production-ready instruction files for Claude Code
 
 ## License
 
